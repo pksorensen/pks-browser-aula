@@ -1,0 +1,29 @@
+{
+  "name": "aula-connect",
+  "description": "Forbinder Aula: du logger ind som forælder med dit eget MitID i vinduet, trayen fanger login og gemmer adgangen krypteret på maskinen. Ingen klik er skrevet i opskriften — du klikker selv.",
+  "profile": "aula",
+  "oauth": {
+    "authorize": "https://login.aula.dk/simplesaml/module.php/oidc/authorize.php",
+    "token": "https://login.aula.dk/simplesaml/module.php/oidc/token.php",
+    "clientId": "_99949a54b8b65423862aac1bf629599ed64231607a",
+    "redirectUri": "https://app-private.aula.dk",
+    "scope": "aula-sensitive",
+    "store": "aula"
+  },
+  "params": {
+    "oauthAuthorizeUrl": { "required": true, "description": "Fyldes af trayen: authorize-adressen med state og PKCE-challenge." },
+    "oauthState": { "required": true, "description": "Fyldes af trayen." }
+  },
+  "result": ["oauthCode"],
+  "steps": [
+    {
+      "id": "log-ind",
+      "do": "human",
+      "url": "{{oauthAuthorizeUrl}}",
+      "prompt": "Log ind som forælder med dit eget MitID i vinduet. Trayen fanger login, når Aula sender dig tilbage — du skal ikke gøre andet.",
+      "timeoutMs": 600000,
+      "capture": { "redirect": "https://app-private.aula.dk", "as": "oauthCode", "state": "{{oauthState}}" },
+      "comment": "Klientid'et er Aula-appens offentlige (samme som alle fællesskabsprojekterne bruger). Det er en vilkårsrisiko der skal stå i DPIA'en, ikke en hemmelighed."
+    }
+  ]
+}
